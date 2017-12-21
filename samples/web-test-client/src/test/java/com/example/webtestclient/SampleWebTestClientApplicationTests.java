@@ -16,6 +16,11 @@
 
 package com.example.webtestclient;
 
+import static com.epages.restdocs.raml.RamlResourceDocumentation.ramlResource;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
+import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,8 +32,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
-import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
+import com.epages.restdocs.raml.RamlResourceSnippetParameters;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = SampleWebTestClientApplication.class)
@@ -51,10 +55,13 @@ public class SampleWebTestClientApplicationTests {
 	}
 
 	@Test
-	public void sample() throws Exception {
-		this.webTestClient.get().uri("/").exchange()
+	public void sample() {
+		this.webTestClient.get().uri("/hello").exchange()
 			.expectStatus().isOk().expectBody()
-			.consumeWith(document("sample"));
+			.consumeWith(document("sample", ramlResource(RamlResourceSnippetParameters.builder()
+					.description("Let the API say hello")
+					.responseFields(fieldWithPath("hello").description("The greeting"))
+					.build())));
 	}
 
 }

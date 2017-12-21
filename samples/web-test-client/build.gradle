@@ -1,14 +1,24 @@
-plugins {
-	id "org.asciidoctor.convert" version "1.5.6"
+
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.epages:restdocs-raml-gradle-plugin:0.2.2'
+	}
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'com.epages.restdocs-raml'
 
 repositories {
 	mavenLocal()
 	maven { url 'https://repo.spring.io/libs-snapshot' }
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
+	jcenter()
+
 }
 
 group = 'com.example'
@@ -29,24 +39,20 @@ dependencies {
 	testCompile 'junit:junit:4.12'
 	testCompile 'org.springframework:spring-test:5.0.1.RELEASE'
 	testCompile "org.springframework.restdocs:spring-restdocs-webtestclient:${project.ext['spring-restdocs.version']}"
-	asciidoctor "org.springframework.restdocs:spring-restdocs-asciidoctor:${project.ext['spring-restdocs.version']}"
+	testCompile 'com.epages:restdocs-raml:0.2.2'
+	testCompile 'org.json:json:20170516'
 }
 
 test {
 	outputs.dir snippetsDir
 }
 
-asciidoctor {
-	inputs.dir snippetsDir
-	dependsOn test
-}
-
-jar {
-	dependsOn asciidoctor
-	from ("${asciidoctor.outputDir}/html5") {
-		into 'static/docs'
-	}
-}
 
 eclipseJdt.onlyIf { false }
 cleanEclipseJdt.onlyIf { false }
+
+ramldoc { //7
+	apiTitle = 'Hello world'
+	apiBaseUri = 'http://localhost:8080/'
+	ramlVersion = "1.0"
+}

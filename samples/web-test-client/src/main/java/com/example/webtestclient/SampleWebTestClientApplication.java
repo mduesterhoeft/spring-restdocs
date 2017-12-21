@@ -35,7 +35,7 @@ public class SampleWebTestClientApplication {
 
 	@Bean
 	public RouterFunction<ServerResponse> routerFunction() {
-		return RouterFunctions.route(RequestPredicates.GET("/"), (request) -> ServerResponse.status(HttpStatus.OK).syncBody("Hello, World"));
+		return RouterFunctions.route(RequestPredicates.GET("/hello"), (request) -> ServerResponse.status(HttpStatus.OK).syncBody(new DummyResponse("Hello, World")));
 	}
 
 	public static void main(String[] args) {
@@ -45,4 +45,15 @@ public class SampleWebTestClientApplication {
 		httpServer.startAndAwait(adapter);
 	}
 
+	static class DummyResponse {
+		public DummyResponse(String hello) {
+			this.hello = hello;
+		}
+
+		private final String hello;
+
+		public String getHello() {
+			return hello;
+		}
+	}
 }
